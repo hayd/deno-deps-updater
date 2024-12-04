@@ -34,7 +34,7 @@ export class FakeRegistry implements RegistryUrl {
 
 export class FakeDenoLand extends DenoLand {
   // deno-lint-ignore require-await
-  async all(): Promise<string[]> {
+  override async all(): Promise<string[]> {
     return ["0.35.0", "0.34.0"];
   }
 }

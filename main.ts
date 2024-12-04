@@ -83,7 +83,15 @@ async function upgrade() {
   console.log(url);
 
   // TODO support alternative name to udd if that's what's been used before.
-  await spawn([Deno.execPath(), "install", "--reload", "-qAfn", "udd", url]);
+  await spawn([
+    Deno.execPath(),
+    "install",
+    "--global",
+    "--reload",
+    "-qAfn",
+    "udd",
+    url,
+  ]);
 }
 
 async function main(args: string[]) {

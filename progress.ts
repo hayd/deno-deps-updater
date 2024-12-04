@@ -1,3 +1,5 @@
+import { Writer } from "./deps.ts";
+
 const { noColor } = Deno;
 
 const START = noColor ? "" : "\x1b[999D\x1b[K";
@@ -8,9 +10,9 @@ const encoder = new TextEncoder();
 export class Progress {
   n: number;
   step = -1;
-  writer: Deno.Writer;
+  writer: Writer;
 
-  constructor(n: number, writer: Deno.Writer = Deno.stdout) {
+  constructor(n: number, writer: Writer = Deno.stdout) {
     this.n = n;
     this.writer = writer;
   }

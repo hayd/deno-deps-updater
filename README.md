@@ -25,7 +25,7 @@ Use deno
 install or update udd:
 
 ```sh
-deno install -rf --allow-read=. --allow-write=. --allow-net https://deno.land/x/udd/main.ts
+deno install --global -rf --allow-read=. --allow-write=. --allow-net https://deno.land/x/udd/main.ts
 ```
 
 _You may need to include the deno bin directory in your PATH._

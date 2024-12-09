@@ -9,20 +9,15 @@ function testsThunk(tests: string[]): () => Promise<void> {
     for (const t of tests) {
       // FIXME is there a better way to split / pass arrays?
       // This fails if you wanted to pass e.g. --foo="a b"
-      const p = Deno.run({
-        cmd: t.split(" "),
-        stdout: "piped",
+      const c = new Deno.Command(Deno.execPath(), {
+        args: t.split(" "),
         stderr: "piped",
       });
-      const success = (await p.status()).success;
+      const { success, stderr } = await c.output();
       if (!success) {
         console.log();
-        await Deno.stdout.write(await p.stderrOutput());
+        await Deno.stdout.write(stderr);
       }
-      // This close handling cleans up resouces but is not required...
-      p.close();
-      p.stdout!.close();
-      p.stderr!.close();
       if (!success) {
         throw new Error(t);
       }
@@ -58,20 +53,17 @@ function version() {
 
 // https://github.com/jurassiscripts/velociraptor/blob/971b7db71cf635b0c8f2de822aa4270e52cce498/src/util.ts#L22-L39
 async function spawn(args: string[], cwd?: string): Promise<string> {
-  const process = Deno.run({
-    cmd: args,
+  const command = new Deno.Command(Deno.execPath(), {
+    args: args,
     cwd,
     stdout: "piped",
     stderr: "piped",
   });
-  const { code } = await process.status();
+  const { code, stdout, stderr } = await command.output();
   if (code === 0) {
-    const rawOutput = await process.output();
-    process.close();
-    return new TextDecoder().decode(rawOutput);
+    return new TextDecoder().decode(stdout);
   } else {
-    const error = new TextDecoder().decode(await process.stderrOutput());
-    process.close();
+    const error = new TextDecoder().decode(stderr);
     throw new Error(error);
   }
 }
@@ -83,7 +75,7 @@ async function upgrade() {
   console.log(url);
 
   // TODO support alternative name to udd if that's what's been used before.
-  await spawn([Deno.execPath(), "install", "--reload", "-qAfn", "udd", url]);
+  await spawn(["install", "--reload", "-qAfn", "udd", url]);
 }
 
 async function main(args: string[]) {

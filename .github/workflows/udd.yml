@@ -9,15 +9,15 @@ jobs:
   update-dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
         with:
           deno-version: 1.20.2
       - name: Update dependencies
         run: |
           deno run -A https://deno.land/x/udd/main.ts deps.ts
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v7
         id: pr
         with:
           commit-message: "Update dependencies"
@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "::set-output name=sha::$(git rev-parse HEAD)"
       - name: Set commit status with pending
-        uses: Sibz/github-status-action@v1
+        uses: guibranco/github-status-action-v2@v1
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: "Basic tests"
@@ -44,7 +44,7 @@ jobs:
         run: |
           deno test --allow-read --allow-write
       - name: Set commit status with outcome
-        uses: Sibz/github-status-action@v1
+        uses: guibranco/github-status-action-v2@v1
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: "Basic tests"
